@@ -15,14 +15,12 @@ class YtProcess:
 
     def _gather_tasks(self):
         self.tasks = list()
-        print(self.tasks_dir)
         for f in glob.glob(os.path.join(self.tasks_dir, '*.json')):
             loaded_tasks = load_tasks(f)
             for t in loaded_tasks:
                 # Remove the repeat tasks.
                 if t not in self.tasks:
                     self.tasks.append(t)
-                    print(t)
 
     def _download(self):
         timer = Timer()
@@ -40,18 +38,17 @@ class YtProcess:
 
             # Select video or audio stream
             stream = None
-            stype = None
-            if t.audio_only:
+            if t.type == 'audio':
                 stream = yt.streams.get_audio_only()
-                stype = 'audio'
-            else:
+            elif t.type == 'video':
                 stream = yt.streams.get_highest_resolution()
-                stype = 'video'
+            else:
+                continue
 
             make_recursive_dir(self.saved_dir, t.path)
 
             # Now download it.
-            print('Downloading {t}: {u}'.format(t=stype, u=t.url))
+            print('Downloading the {t}: {u}'.format(t=t.type, u=t.url))
             stream.download(output_path=os.path.join(self.saved_dir, *t.path))
             cnt += 1
 

@@ -5,25 +5,25 @@ class Task:
         self.url = str()
         self.path = list()
         self.comment = str()
-        self.audio_only = None
+        self.type = None
 
     def to_dict(self):
         out = dict()
         out['url'] = self.url
         out['path'] = self.path
-        out['audio_only'] = self.audio_only
+        out['type'] = self.type
         out['comment'] = None # Don't output the comment to file.
         return out
 
     def from_dict(self, data):
         self.url = data['url']
         self.path = data['path']
-        self.audio_only = data['audio_only']
+        self.type = data['type']
         self.comment = data['comment']
 
     def __eq__(self, other):
         return self.url == other.url and \
-                   self.audio_only == other.audio_only and \
+                   self.type == other.type and \
                    os.path.join(*self.path) == os.path.join(*other.path)
 
     def __str__(self):
@@ -48,7 +48,6 @@ def save_tasks(filename, tasks):
     datas = list()
     for t in tasks:
         datas.append(t.to_dict())
-        print(t.to_dict())
 
     with open(filename, 'w') as f:
         json.dump(datas, f)
